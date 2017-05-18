@@ -1,12 +1,16 @@
 import geopandas as gpd
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
 import pandana as pdna
 import pandas as pd
 
 # relative path import
 from utils.utils import format_pandana_edges_nodes, parse_wkt
+
+# ignore display since using docker vm
+matplotlib.use('Agg')
+cm = matplotlib.cm
+plt = matplotlib.pyplot
 
 # settings
 bbox = (-89.566399, 42.984056, -89.229584, 43.171917)
@@ -79,7 +83,8 @@ for n in [15,30,45,60]:
 
     # start get colors
     num_bins = 5
-    cmap = 'YlOrRd'
+    cmap = 'hot'
+    # cmap = 'YlOrRd'
     bin_labels = range(5)
     col_values = n_df['weight'].values
     categories = pd.qcut(x=col_values, q=num_bins, labels=bin_labels)
@@ -89,6 +94,7 @@ for n in [15,30,45,60]:
 
     node_size = 1
     ax.scatter(n_df['x'].values, n_df['y'].values, s=node_size, c=colors, alpha=1, zorder=3)
+    ax.set_facecolor('black')
 
     plt.savefig('testplot_' + str(n) + '_min.png', facecolor='black')
 
