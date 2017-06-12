@@ -1,7 +1,8 @@
+import geopandas as gpd
 import pandas as pd
 from shapely import wkt
 
-def format_pandana_edges_nodes(edge_df, node_df):
+def format_edges_nodes_as_gdfs(edge_df, node_df):
     node_df['id_int'] = range(1, len(node_df.index) + 1)
 
     with_from_int = pd.merge(edge_df,
@@ -37,6 +38,16 @@ def format_pandana_edges_nodes(edge_df, node_df):
     node_df = node_df[['id', 'x', 'y']]
 
     return with_both_int, node_df
+
+
+def format_blocks_as_gdf(blocks_df):
+    geometry = blocks_df['geometry'].map(parse_wkt)
+    blocks_df = blocks_df.drop('geometry', axis=1)
+    crs = {'init': 'epsg:4326'}
+    blocks_gdf = gpd.GeoDataFrame(blocks_df, crs=crs, geometry=geometry)
+
+    return blocks_gdf
+
 
 def parse_wkt(s):
     if s.startswith('SRID'):
